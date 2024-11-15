@@ -6,6 +6,7 @@ import { BlogPostService } from '../service/blog-post.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CategoryService } from '../../category/services/category.service';
 import { UpdateBlogPost } from '../models/update-blog-post.model';
+import { ImageServiceService } from 'src/app/Shared/component/image-service.service';
 
 @Component({
   selector: 'app-edit-blogpost',
@@ -18,16 +19,18 @@ export class EditBlogpostComponent implements OnInit, OnDestroy {
   model?: BlogPost;
   categories$? : Observable<Category[]>;
   selectedCategories?: string[];
+  isImageSelectorVisible : boolean = false;
 
   routeSubscription?: Subscription;
   updateBlogPostSubscription?: Subscription;
   getBlogPostSubscription?: Subscription;
   deleteBlogPostSubscription?: Subscription;
+  imageSelectSubscricption?: Subscription;
   
   constructor(private route: ActivatedRoute,
     private blogPostService: BlogPostService,
     private categoryService: CategoryService,
-    private router:Router) {
+    private router:Router, private imageService: ImageServiceService) {
   }
   ngOnInit(): void {
     this.categories$ = this.categoryService.getAllCategories();
@@ -44,9 +47,20 @@ export class EditBlogpostComponent implements OnInit, OnDestroy {
           });
           ;
         }
+
+        this.imageSelectSubscricption = this.imageService.onSelectImage()
+        .subscribe({
+          next: (response) => {
+            if (this.model) {
+              this.model.featuredImageUrl = response.url;
+              this.isImageSelectorVisible = false;
+            }
+          }
+        })
       }
     });
   }
+  
   onFormSubmit(): void {
     // Convert this model to Request Object
     if (this.model && this.id) {
@@ -81,11 +95,19 @@ export class EditBlogpostComponent implements OnInit, OnDestroy {
       });
     }
   }
+ 
+  openImageSelector(): void {
+    this.isImageSelectorVisible = true;
+  }
+  closeImageSelector() : void {
+    this.isImageSelectorVisible = false;
+  }
 
   ngOnDestroy(): void {
     this.routeSubscription?.unsubscribe();
     this.updateBlogPostSubscription?.unsubscribe();
     this.getBlogPostSubscription?.unsubscribe();
     this.deleteBlogPostSubscription?.unsubscribe();
+    this.imageSelectSubscricption?.unsubscribe();
   }
 }
