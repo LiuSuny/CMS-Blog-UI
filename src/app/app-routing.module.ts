@@ -6,32 +6,48 @@ import { EditCategoryComponent } from './features/category/edit-category/edit-ca
 import { BlogpostListComponent } from './features/blog-post/blogpost-list/blogpost-list.component';
 import { AddBlogpostComponent } from './features/blog-post/add-blogpost/add-blogpost.component';
 import { EditBlogpostComponent } from './features/blog-post/edit-blogpost/edit-blogpost.component';
+import { HomeComponent } from './features/public/home/home.component';
+import { BlogDetailsComponent } from './features/public/blog-details/blog-details.component';
+import { guardGuard } from './features/auth/guards/guard.guard';
+import { LoginComponent } from './features/auth/login/login.component';
 
 const routes: Routes = [
   {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
     path: 'admin/categories',
-    component: CategoryListComponent
+    component: CategoryListComponent, canActivate: [guardGuard]
   },
   
   {
     path: 'admin/categories/add',
-    component: AddCategoryComponent
+    component: AddCategoryComponent, canActivate: [guardGuard]
   },
   {
     path: 'admin/categories/:id',
-    component: EditCategoryComponent
+    component: EditCategoryComponent, canActivate: [guardGuard]
   },
   {
     path: 'admin/blogposts',
-    component: BlogpostListComponent
+    component: BlogpostListComponent, canActivate: [guardGuard]
   },
   {
     path: 'admin/blogposts/add',
-    component: AddBlogpostComponent
+    component: AddBlogpostComponent, canActivate: [guardGuard]
+  },
+  {
+    path: '',
+    component: HomeComponent
+  },
+  {
+    path: 'blog/:url',
+    component: BlogDetailsComponent
   },
   {
     path: 'admin/blogposts/:id',
-    component: EditBlogpostComponent
+    component: EditBlogpostComponent, canActivate: [guardGuard]
   }
 ];
 
